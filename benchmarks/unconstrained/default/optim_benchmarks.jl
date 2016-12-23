@@ -7,7 +7,7 @@ write(f, "\n")
         try
         # Force compilation and obtain results
         results = optimize(problem.f, problem.g!, problem.h!,
-                           problem.initial_x, algorithm, OptimizationOptions(g_tol = 1e-16))
+                           problem.initial_x, algorithm, Optim.Options(g_tol = 1e-16))
         # Run each algorithm n times
         n = 10
         if algorithm == ParticleSwarm() && name == "Large Polynomial"
@@ -16,7 +16,7 @@ write(f, "\n")
         # Estimate run time in seconds
         run_time = minimum([@elapsed optimize(problem.f, problem.g!, problem.h!,
                                problem.initial_x,
-                               algorithm, OptimizationOptions(g_tol = 1e-16)) for nn = 1:n])
+                               algorithm, Optim.Options(g_tol = 1e-16)) for nn = 1:n])
 
         # Count iterations
         iterations = results.iterations

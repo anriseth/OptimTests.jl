@@ -9,7 +9,7 @@
 #
 ####
 # unconstrained
-options = OptimizationOptions()
+options = Optim.Options()
 cutest_problems = CUTEst.select(max_var=5,contype = :unc, custom_filter=x->x["derivative_order"]>=2)
 n = length(default_solvers)
 m = length(cutest_problems)
@@ -28,44 +28,41 @@ write(f, "\n")
     f_hat = obj(nlp, x_hat)
     xs = []
     times = []
-        for i = 1:n
-            if !(default_solvers[i] in (Newton(), NewtonTrustRegion()))
-            	try
-            		result = optimize(x->obj(nlp, x),(x, stor) -> grad!(nlp,x,stor), x0, default_solvers[i], options)
-                    mintime = @elapsed optimize(x->obj(nlp, x),(x, stor) -> grad!(nlp,x,stor), x0, default_solvers[i], options)
-                    if f_hat > Optim.minimum(result)
-                        f_hat = Optim.minimum(result)
-                        x_hat[:] = Optim.minimizer(result)
-                    end
-                    push!(output, [prob,
-                                   default_names[i],
-                                   Optim.converged(result),
-                                   mintime,
-                                   Optim.minimum(result),
-                                   Optim.iterations(result),
-                                   Optim.f_calls(result),
-                                   Optim.g_calls(result)])
-                    push!(xs, Optim.minimizer(result))
-                catch
-                    push!(output, ([prob,
-                                   default_names[i],
-                                   false,
-                                   Inf,
-                                   Inf,
-                                   Inf,
-                                   Inf,
-                                   Inf]))
-                    push!(xs, fill(Inf, length(x0)))
-            	end
+    for i = 1:n
+        try
+            result = optimize(d, x0, default_solvers[i], options)
+            mintime = @elapsed optimize(d, x0, default_solvers[i], options)
+            if f_hat > Optim.minimum(result)
+                f_hat = Optim.minimum(result)
+                x_hat[:] = Optim.minimizer(result)
             end
+            push!(output, [prob,
+                           default_names[i],
+                           Optim.converged(result),
+                           mintime,
+                           Optim.minimum(result),
+                           Optim.iterations(result),
+                           Optim.f_calls(result),
+                           Optim.g_calls(result)])
+            push!(xs, Optim.minimizer(result))
+        catch
+            push!(output, ([prob,
+                            default_names[i],
+                            false,
+                            Inf,
+                            Inf,
+                            Inf,
+                            Inf,
+                            Inf]))
+            push!(xs, fill(Inf, length(x0)))
         end
-        for i = 1:n
-            if !(default_solvers[i] in (Newton(), NewtonTrustRegion())) # should be typeof-ish instead
-                write(f, join(map(x->"$x",output[i]),",")*",")
-                write(f, join(map(x->"$x",[f_hat, output[i][5]-f_hat, norm(xs[i]-x_hat, Inf)]),","))
-                write(f, "\n")
-            end
-        end
+    end
+
+    for i = 1:n
+        write(f, join(map(x->"$x",output[i]),",")*",")
+        write(f, join(map(x->"$x",[f_hat, output[i][5]-f_hat, norm(xs[i]-x_hat, Inf)]),","))
+        write(f, "\n")
+    end
     finalize(nlp)
 end
 close(f)

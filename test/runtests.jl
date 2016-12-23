@@ -26,7 +26,7 @@ immutable Results
 end
 
 # unconstrained
-options = OptimizationOptions(store_trace=true)
+options = Optim.Options(store_trace=true)
 unc_problems = CUTEst.select(max_var=10,contype = :unc, custom_filter=x->x["derivative_order"]>=2)
 unc_results = Dict{String,Any}()
 for prob in unc_problems

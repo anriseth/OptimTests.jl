@@ -3,6 +3,7 @@ using Optim, OptimTests, CUTEst, ProgressMeter, Plots, DataFrames, BenchmarkTool
 do_benchmarks = false
 saveplots = false
 
+current_dir = pwd()
 pkg_dir = Pkg.dir("OptimTests")
 version_sha = latest_commit("OptimTests")
 benchmark_dir = pkg_dir*"/benchmarks/unconstrained/history/"
@@ -17,9 +18,9 @@ cd(version_dir)
 default_names = ["Accelerated Gradient Descent",
                  "BFGS",
                  "L-BFGS",
-                 "Momentum Gradient Descent",
                  "Conjugate Gradient",
                  "Gradient Descent",
+                 "Momentum Gradient Descent",
                  "Nelder-Mead",
                  "Particle Swarm",
                  "Simulated Annealing",
@@ -43,3 +44,5 @@ saveplots && save_plots(version_dir, :optim)
 
 do_benchmarks && include("default/cutest_benchmarks.jl")
 saveplots && save_plots(version_dir, :cutest)
+
+cd(current_dir)
