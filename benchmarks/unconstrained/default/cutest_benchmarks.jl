@@ -10,7 +10,7 @@
 ####
 # unconstrained
 options = Optim.Options()
-cutest_problems = CUTEst.select(max_var=5,contype = :unc, custom_filter=x->x["derivative_order"]>=2)
+cutest_problems = CUTEst.select(max_var=100,contype = :unc, custom_filter=x->x["derivative_order"]>=2)
 n = length(default_solvers)
 m = length(cutest_problems)
 f = open(join([version_dir, "cutest_benchmark.csv"], "/"), "w")

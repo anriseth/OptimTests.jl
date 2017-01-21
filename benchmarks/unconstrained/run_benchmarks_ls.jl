@@ -17,19 +17,19 @@ end
 cd(version_dir)
 
 default_names = ["Hager-Zhang",
-                 "Hager-Zhang reset",
                  "BT3",
-                 "BT3 reset",
-                 #"More-Thuente",
-                 #"More-Thuente reset",
-                 #"Wolfe",
-                 #"Wolfe reset"
+                 "BT2",
+                 "More-Thuente",
+                 "Wolfe",
+                 "Basic"
                  ]
 
-default_solvers =[Newton(linesearch=LineSearches.hagerzhang!,resetalpha=false),
-                  Newton(linesearch=LineSearches.hagerzhang!,resetalpha=true),
-                  Newton(linesearch=LineSearches.bt3!,resetalpha=false),
-                  Newton(linesearch=LineSearches.bt3!,resetalpha=true),
+default_solvers =[Newton(linesearch=LineSearches.hagerzhang!),
+                  Newton(linesearch=LineSearches.bt3!),
+                  Newton(linesearch=LineSearches.bt2!),
+                  Newton(linesearch=LineSearches.morethuente!),
+                  Newton(linesearch=LineSearches.strongwolfe!),
+                  Newton(linesearch=LineSearches.basic!),
                   ]
 
 do_benchmarks && include("default/optim_benchmarks.jl")
